@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+@import "tw-animate-css";
+@import "shadcn-svelte/tailwind.css";
+@import "@fontsource-variable/hanken-grotesk";
+@import "@fontsource-variable/spline-sans-mono";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Everforest (dark medium) is the only theme. Both :root and .dark carry
+ * identical values so the palette renders whether or not the `dark` class is
+ * present, and the shadcn `dark:` variants still resolve. --radius is 0
+ * everywhere to keep every component square (sharp corners). Colours are the
+ * canonical Everforest dark-medium hexes; the soft green accent is the primary.
+ */
+:root,
+.dark {
+	--background: #232a2e;
+	--foreground: #d3c6aa;
+	--card: #2d353b;
+	--card-foreground: #d3c6aa;
+	--popover: #2d353b;
+	--popover-foreground: #d3c6aa;
+	--primary: #a7c080;
+	--primary-foreground: #232a2e;
+	--secondary: #343f44;
+	--secondary-foreground: #d3c6aa;
+	--muted: #343f44;
+	--muted-foreground: #9da9a0;
+	--accent: #425047;
+	--accent-foreground: #a7c080;
+	--destructive: #e67e80;
+	--border: #3d484d;
+	--input: #475258;
+	--ring: #a7c080;
+	--chart-1: #a7c080;
+	--chart-2: #83c092;
+	--chart-3: #7fbbb3;
+	--chart-4: #dbbc7f;
+	--chart-5: #e69875;
+	--radius: 0rem;
+	--sidebar: #2d353b;
+	--sidebar-foreground: #d3c6aa;
+	--sidebar-primary: #a7c080;
+	--sidebar-primary-foreground: #232a2e;
+	--sidebar-accent: #425047;
+	--sidebar-accent-foreground: #a7c080;
+	--sidebar-border: #3d484d;
+	--sidebar-ring: #a7c080;
+}
+
+@theme inline {
+	--font-sans: 'Hanken Grotesk Variable', system-ui, sans-serif;
+	--font-mono: 'Spline Sans Mono Variable', ui-monospace, monospace;
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar: var(--sidebar);
+	--color-chart-5: var(--chart-5);
+	--color-chart-4: var(--chart-4);
+	--color-chart-3: var(--chart-3);
+	--color-chart-2: var(--chart-2);
+	--color-chart-1: var(--chart-1);
+	--color-ring: var(--ring);
+	--color-input: var(--input);
+	--color-border: var(--border);
+	--color-destructive: var(--destructive);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-accent: var(--accent);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-muted: var(--muted);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-secondary: var(--secondary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary: var(--primary);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-popover: var(--popover);
+	--color-card-foreground: var(--card-foreground);
+	--color-card: var(--card);
+	--color-foreground: var(--foreground);
+	--color-background: var(--background);
+	--radius-sm: calc(var(--radius) * 0.6);
+	--radius-md: calc(var(--radius) * 0.8);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) * 1.4);
+	--radius-2xl: calc(var(--radius) * 1.8);
+	--radius-3xl: calc(var(--radius) * 2.2);
+	--radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+	html {
+		@apply font-sans;
+	}
+}

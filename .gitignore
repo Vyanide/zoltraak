@@ -1,0 +1,14 @@
+# Dependencies (each project also has its own .gitignore)
+node_modules
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
