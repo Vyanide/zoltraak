@@ -163,8 +163,7 @@ export abstract class ImageService {
 	}
 
 	/**
-	 * Rotate an image clockwise by `angle` degrees and optionally mirror it with
-	 * sharp (`flipH` = left↔right via `flop`, `flipV` = top↔bottom via `flip`).
+	 * Rotate an image clockwise by `angle` degrees with sharp.
 	 *
 	 * `background` (`#rrggbb` or `'transparent'`) fills the corners exposed by a
 	 * non-right-angle rotation; it is irrelevant for multiples of 90°. As with
@@ -172,13 +171,7 @@ export abstract class ImageService {
 	 * keeps the source format (PNG fallback). EXIF orientation is baked in first so
 	 * the result matches how the image renders in the browser.
 	 */
-	static async rotate(
-		source: Uint8Array,
-		angle: number,
-		background: string,
-		flipH = false,
-		flipV = false
-	): Promise<ImageResult> {
+	static async rotate(source: Uint8Array, angle: number, background: string): Promise<ImageResult> {
 		let format: string | undefined;
 		try {
 			format = (await sharp(source, { failOn: 'none' }).metadata()).format;
@@ -195,13 +188,7 @@ export abstract class ImageService {
 			// Bake EXIF orientation first (matches the browser preview), then rotate —
 			// a fresh sharp pass, since chained rotate() calls don't compose.
 			const oriented = await sharp(source, { failOn: 'none' }).rotate().toBuffer();
-			// A fresh pipeline per output branch: rotate, then the requested mirrors.
-			const build = () => {
-				let p = sharp(oriented).rotate(a, { background: fill });
-				if (flipV) p = p.flip();
-				if (flipH) p = p.flop();
-				return p;
-			};
+			const build = () => sharp(oriented).rotate(a, { background: fill });
 
 			// Exposed corners only appear off the right angles; emit PNG for the alpha.
 			if (transparent && a % 90 !== 0) {
@@ -218,6 +205,39 @@ export abstract class ImageService {
 			return { ok: true, bytes: new Uint8Array(out), mime: 'image/png', ext: 'png' };
 		} catch {
 			return { ok: false, error: 'This image could not be rotated.' };
+		}
+	}
+
+	/**
+	 * Mirror an image with sharp: `flipH` flips left↔right (`flop`), `flipV` flips
+	 * top↔bottom (`flip`). Mirroring exposes no new area, so there is no background
+	 * to fill. The source format is preserved (PNG fallback) and EXIF orientation
+	 * is baked in first so the result matches the browser preview.
+	 */
+	static async flip(source: Uint8Array, flipH = false, flipV = false): Promise<ImageResult> {
+		let format: string | undefined;
+		try {
+			format = (await sharp(source, { failOn: 'none' }).metadata()).format;
+		} catch {
+			return { ok: false, error: 'The uploaded file could not be read as an image.' };
+		}
+
+		try {
+			// Bake EXIF orientation first so the result matches the browser preview.
+			const oriented = await sharp(source, { failOn: 'none' }).rotate().toBuffer();
+			let pipeline = sharp(oriented);
+			if (flipV) pipeline = pipeline.flip();
+			if (flipH) pipeline = pipeline.flop();
+
+			const preserved = format ? PRESERVABLE[format] : undefined;
+			if (preserved) {
+				const out = await pipeline.toBuffer();
+				return { ok: true, bytes: new Uint8Array(out), mime: preserved.mime, ext: preserved.ext };
+			}
+			const out = await pipeline.png().toBuffer();
+			return { ok: true, bytes: new Uint8Array(out), mime: 'image/png', ext: 'png' };
+		} catch {
+			return { ok: false, error: 'This image could not be flipped.' };
 		}
 	}
 }

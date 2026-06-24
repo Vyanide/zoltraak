@@ -7,8 +7,6 @@
 
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
 	import RotateCw from '@lucide/svelte/icons/rotate-cw';
-	import FlipHorizontal from '@lucide/svelte/icons/flip-horizontal-2';
-	import FlipVertical from '@lucide/svelte/icons/flip-vertical-2';
 	import Download from '@lucide/svelte/icons/download';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
@@ -17,6 +15,8 @@
 
 	const sectionLabel =
 		'block font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground';
+	const inputBase =
+		'h-9 w-full border border-input bg-transparent px-2 py-1 text-center font-mono text-sm tabular-nums outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none';
 
 	const MIME_EXT: Record<string, string> = {
 		'image/png': 'png',
@@ -32,8 +32,6 @@
 	let angle = $state(0);
 	let background = $state('transparent');
 	let hexColor = $state('#ffffff');
-	let flipH = $state(false);
-	let flipV = $state(false);
 	let result = $state<Blob | null>(null);
 	let resultUrl = $state('');
 	let resultName = $state('');
@@ -64,7 +62,7 @@
 		resultUrl = blob ? URL.createObjectURL(blob) : '';
 	}
 
-	/** Drop the previous result — it belongs to an earlier angle/flip/background. */
+	/** Drop the previous result — it belongs to an earlier angle/background. */
 	function clearResult() {
 		result = null;
 		setResultUrl(null);
@@ -77,8 +75,6 @@
 		original = file;
 		setOriginalUrl(file);
 		angle = 0;
-		flipH = false;
-		flipV = false;
 		clearResult();
 	}
 
@@ -86,8 +82,6 @@
 		setOriginalUrl(null);
 		original = null;
 		angle = 0;
-		flipH = false;
-		flipV = false;
 		background = 'transparent';
 		clearResult();
 	}
@@ -99,14 +93,6 @@
 	}
 	function setAngle(deg: number) {
 		angle = norm(deg);
-		clearResult();
-	}
-	function toggleFlipH() {
-		flipH = !flipH;
-		clearResult();
-	}
-	function toggleFlipV() {
-		flipV = !flipV;
 		clearResult();
 	}
 
@@ -125,7 +111,7 @@
 		runState = 'working';
 		errorMessage = null;
 		try {
-			const blob = await rotateImage(original, { angle, background, flipH, flipV });
+			const blob = await rotateImage(original, angle, background);
 			result = blob;
 			const dot = original.name.lastIndexOf('.');
 			const base = dot > 0 ? original.name.slice(0, dot) : original.name;
@@ -150,8 +136,8 @@
 
 {#if !original}
 	<Dropzone
-		title="Drop an image to rotate or flip it, or click to browse"
-		description="Any image format. Set the angle and mirroring, then apply — the transform runs on the server and comes back as a download."
+		title="Drop an image to rotate it, or click to browse"
+		description="Any image format. Set the angle, then rotate — it runs on the server and comes back as a download."
 		buttonLabel="Choose image"
 		accept="image/*"
 		onfiles={(files) => {
@@ -171,7 +157,7 @@
 			<Button variant="outline" size="sm" onclick={reset}>Choose different image</Button>
 		</div>
 
-		<!-- Studio: source until applied, then the rendered result to review before download -->
+		<!-- Studio: source until rotated, then the rendered result to review before download -->
 		<div class="grid gap-4 lg:grid-cols-[1fr_18rem]">
 			<div
 				class="relative grid min-h-[24rem] place-items-center overflow-hidden border bg-muted/30 p-6"
@@ -204,53 +190,19 @@
 							90°
 						</Button>
 					</div>
-					<label class="flex items-center justify-between gap-2 pt-1">
-						<span class="text-sm text-muted-foreground">Angle</span>
-						<span class="inline-flex items-center gap-1">
-							<input
-								type="number"
-								min="0"
-								max="359"
-								value={angle}
-								oninput={(e) => setAngle(+e.currentTarget.value)}
-								class="w-20 border bg-background px-2 py-1 text-right font-mono text-sm tabular-nums outline-none focus:border-ring"
-							/>
-							<span class="font-mono text-sm text-muted-foreground">°</span>
-						</span>
-					</label>
-				</div>
-
-				<div class="space-y-2">
-					<span class={sectionLabel}>Flip</span>
-					<div class="grid grid-cols-2 gap-2">
-						<button
-							type="button"
-							aria-pressed={flipH}
-							onclick={toggleFlipH}
-							class={cn(
-								'inline-flex items-center justify-center gap-2 border px-3 py-1.5 text-[13px] transition-colors',
-								flipH
-									? 'border-primary bg-primary/10 text-primary'
-									: 'border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/40'
-							)}
-						>
-							<FlipHorizontal class="size-4" />
-							Horizontal
-						</button>
-						<button
-							type="button"
-							aria-pressed={flipV}
-							onclick={toggleFlipV}
-							class={cn(
-								'inline-flex items-center justify-center gap-2 border px-3 py-1.5 text-[13px] transition-colors',
-								flipV
-									? 'border-primary bg-primary/10 text-primary'
-									: 'border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/40'
-							)}
-						>
-							<FlipVertical class="size-4" />
-							Vertical
-						</button>
+					<div class="flex flex-col items-center gap-1 pt-1">
+						<label for="rotate-angle" class="text-[10px] leading-none text-muted-foreground">
+							Angle (°)
+						</label>
+						<input
+							id="rotate-angle"
+							type="number"
+							min="0"
+							max="359"
+							value={angle}
+							onchange={(e) => setAngle(+e.currentTarget.value)}
+							class={inputBase}
+						/>
 					</div>
 				</div>
 
@@ -304,10 +256,10 @@
 					<Button class="w-full justify-center" onclick={run} disabled={runState === 'working'}>
 						{#if runState === 'working'}
 							<LoaderCircle class="animate-spin" />
-							Applying…
+							Rotating…
 						{:else}
 							<RotateCw />
-							{result ? 'Apply again' : 'Apply'}
+							{result ? 'Rotate again' : 'Rotate'}
 						{/if}
 					</Button>
 					{#if result}

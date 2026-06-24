@@ -104,13 +104,7 @@ export const imageController = new Elysia({ prefix: '/image' })
 		'/rotate',
 		async ({ body, status }) => {
 			const source = new Uint8Array(await body.file.arrayBuffer());
-			const result = await ImageService.rotate(
-				source,
-				body.angle,
-				body.background ?? 'transparent',
-				body.flipH === 'true',
-				body.flipV === 'true'
-			);
+			const result = await ImageService.rotate(source, body.angle, body.background ?? 'transparent');
 			if (!result.ok) return status(422, { error: result.error });
 
 			const base = body.file.name.replace(/\.[^./\\]+$/, '') || 'image';
@@ -120,6 +114,21 @@ export const imageController = new Elysia({ prefix: '/image' })
 			});
 		},
 		{ body: 'image.rotateBody' }
+	)
+	.post(
+		'/flip',
+		async ({ body, status }) => {
+			const source = new Uint8Array(await body.file.arrayBuffer());
+			const result = await ImageService.flip(source, body.flipH === 'true', body.flipV === 'true');
+			if (!result.ok) return status(422, { error: result.error });
+
+			const base = body.file.name.replace(/\.[^./\\]+$/, '') || 'image';
+			const filename = `${base}-flipped.${result.ext}`;
+			return new Response(new Blob([result.bytes], { type: result.mime }), {
+				headers: { 'content-disposition': attachment(filename) }
+			});
+		},
+		{ body: 'image.flipBody' }
 	)
 	.post(
 		'/ocr',

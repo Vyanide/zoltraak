@@ -20,6 +20,7 @@ import ScanText from "@lucide/svelte/icons/scan-text";
 import Crop from "@lucide/svelte/icons/crop";
 import Scaling from "@lucide/svelte/icons/scaling";
 import RotateCw from "@lucide/svelte/icons/rotate-cw";
+import FlipHorizontal2 from "@lucide/svelte/icons/flip-horizontal-2";
 import Clapperboard from "@lucide/svelte/icons/clapperboard";
 import Video from "@lucide/svelte/icons/video";
 import Music from "@lucide/svelte/icons/music";
@@ -158,11 +159,19 @@ export const tools: Tool[] = [
     },
     {
         id: "image-rotate",
-        name: "Rotate & Flip Image",
-        description: "Turn an image by 90°, 180° or any angle, or mirror it horizontally/vertically.",
+        name: "Rotate Image",
+        description: "Turn an image by 90°, 180° or any angle, filling exposed corners.",
         href: "/image/rotate",
         category: "image",
         icon: RotateCw,
+    },
+    {
+        id: "image-flip",
+        name: "Flip Image",
+        description: "Mirror an image horizontally, vertically, or both.",
+        href: "/image/flip",
+        category: "image",
+        icon: FlipHorizontal2,
     },
     {
         id: "image-ocr",

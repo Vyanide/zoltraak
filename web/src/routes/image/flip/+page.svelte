@@ -1,13 +1,13 @@
 <script lang="ts">
-	import ImageRotator from '$lib/image/rotate/image-rotator.svelte';
+	import ImageFlipper from '$lib/image/flip/image-flipper.svelte';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 </script>
 
 <svelte:head>
-	<title>Rotate Image · zoltraak</title>
+	<title>Flip Image · zoltraak</title>
 	<meta
 		name="description"
-		content="Rotate an image by 90°, 180° or any angle. Runs on the server and comes back as a download."
+		content="Mirror an image horizontally or vertically. Runs on the server and comes back as a download."
 	/>
 </svelte:head>
 
@@ -21,12 +21,11 @@
 	</a>
 
 	<header class="mb-8 space-y-1">
-		<h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Rotate Image</h1>
+		<h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Flip Image</h1>
 		<p class="text-muted-foreground">
-			Turn an image by 90°, 180° or any angle. Non-right-angle rotations fill the exposed corners
-			with a colour or transparency.
+			Mirror an image horizontally (left↔right), vertically (top↔bottom), or both.
 		</p>
 	</header>
 
-	<ImageRotator />
+	<ImageFlipper />
 </main>

@@ -101,17 +101,27 @@ export namespace ImageModel {
 	 * `angle` is the clockwise rotation in degrees (the client normalises it to
 	 * 0–359). `background` is a `#rrggbb` hex or the literal `'transparent'` and
 	 * only fills the corners exposed by a non-right-angle rotation; it defaults to
-	 * transparent when omitted. `flipH`/`flipV` are `'true'`/`'false'` strings (the
-	 * literal mirror toggles — left↔right and top↔bottom).
+	 * transparent when omitted.
 	 */
 	export const rotateBody = t.Object({
 		file: t.File({ type: 'image/*', maxSize: '50m' }),
 		angle: t.Integer({ minimum: 0, maximum: 359 }),
-		background: t.Optional(t.String({ minLength: 1 })),
+		background: t.Optional(t.String({ minLength: 1 }))
+	});
+	export type RotateBody = typeof rotateBody.static;
+
+	/**
+	 * Multipart body for `POST /image/flip`.
+	 *
+	 * `flipH`/`flipV` are `'true'`/`'false'` strings — the mirror toggles
+	 * (left↔right and top↔bottom).
+	 */
+	export const flipBody = t.Object({
+		file: t.File({ type: 'image/*', maxSize: '50m' }),
 		flipH: t.Optional(t.String()),
 		flipV: t.Optional(t.String())
 	});
-	export type RotateBody = typeof rotateBody.static;
+	export type FlipBody = typeof flipBody.static;
 
 	/**
 	 * Multipart body for `POST /image/ocr`.
@@ -132,6 +142,7 @@ export namespace ImageModel {
 		'image.cropBody': cropBody,
 		'image.resizeBody': resizeBody,
 		'image.rotateBody': rotateBody,
+		'image.flipBody': flipBody,
 		'image.ocrBody': ocrBody
 	};
 }
