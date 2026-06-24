@@ -19,6 +19,7 @@ import WholeWord from "@lucide/svelte/icons/whole-word";
 import ScanText from "@lucide/svelte/icons/scan-text";
 import Crop from "@lucide/svelte/icons/crop";
 import Scaling from "@lucide/svelte/icons/scaling";
+import RotateCw from "@lucide/svelte/icons/rotate-cw";
 import Clapperboard from "@lucide/svelte/icons/clapperboard";
 import Video from "@lucide/svelte/icons/video";
 import Music from "@lucide/svelte/icons/music";
@@ -156,6 +157,14 @@ export const tools: Tool[] = [
         icon: Scaling,
     },
     {
+        id: "image-rotate",
+        name: "Rotate & Flip Image",
+        description: "Turn an image by 90°, 180° or any angle, or mirror it horizontally/vertically.",
+        href: "/image/rotate",
+        category: "image",
+        icon: RotateCw,
+    },
+    {
         id: "image-ocr",
         name: "Image OCR",
         description: "Extract the text from an image with optical character recognition.",
@@ -220,7 +229,6 @@ export const tools: Tool[] = [
         href: "/developer/json-format",
         category: "developer",
         icon: Braces,
-        status: "coming-soon",
     },
 ];
 

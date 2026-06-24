@@ -101,6 +101,27 @@ export const imageController = new Elysia({ prefix: '/image' })
 		{ body: 'image.resizeBody' }
 	)
 	.post(
+		'/rotate',
+		async ({ body, status }) => {
+			const source = new Uint8Array(await body.file.arrayBuffer());
+			const result = await ImageService.rotate(
+				source,
+				body.angle,
+				body.background ?? 'transparent',
+				body.flipH === 'true',
+				body.flipV === 'true'
+			);
+			if (!result.ok) return status(422, { error: result.error });
+
+			const base = body.file.name.replace(/\.[^./\\]+$/, '') || 'image';
+			const filename = `${base}-rotated.${result.ext}`;
+			return new Response(new Blob([result.bytes], { type: result.mime }), {
+				headers: { 'content-disposition': attachment(filename) }
+			});
+		},
+		{ body: 'image.rotateBody' }
+	)
+	.post(
 		'/ocr',
 		async ({ body, status }) => {
 			const result = await recognizeText(await body.file.arrayBuffer());

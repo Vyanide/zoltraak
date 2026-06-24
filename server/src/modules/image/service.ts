@@ -161,4 +161,63 @@ export abstract class ImageService {
 			return { ok: false, error: 'This image could not be resized.' };
 		}
 	}
+
+	/**
+	 * Rotate an image clockwise by `angle` degrees and optionally mirror it with
+	 * sharp (`flipH` = left↔right via `flop`, `flipV` = top↔bottom via `flip`).
+	 *
+	 * `background` (`#rrggbb` or `'transparent'`) fills the corners exposed by a
+	 * non-right-angle rotation; it is irrelevant for multiples of 90°. As with
+	 * `pad`, transparent output is PNG (for the alpha channel) while opaque output
+	 * keeps the source format (PNG fallback). EXIF orientation is baked in first so
+	 * the result matches how the image renders in the browser.
+	 */
+	static async rotate(
+		source: Uint8Array,
+		angle: number,
+		background: string,
+		flipH = false,
+		flipV = false
+	): Promise<ImageResult> {
+		let format: string | undefined;
+		try {
+			format = (await sharp(source, { failOn: 'none' }).metadata()).format;
+		} catch {
+			return { ok: false, error: 'The uploaded file could not be read as an image.' };
+		}
+
+		const a = (((Math.round(angle) % 360) + 360) % 360);
+		const transparent = background.trim().toLowerCase() === 'transparent';
+		const { r, g, b } = parseHexColor(transparent ? '#000000' : background);
+		const fill = { r, g, b, alpha: transparent ? 0 : 1 };
+
+		try {
+			// Bake EXIF orientation first (matches the browser preview), then rotate —
+			// a fresh sharp pass, since chained rotate() calls don't compose.
+			const oriented = await sharp(source, { failOn: 'none' }).rotate().toBuffer();
+			// A fresh pipeline per output branch: rotate, then the requested mirrors.
+			const build = () => {
+				let p = sharp(oriented).rotate(a, { background: fill });
+				if (flipV) p = p.flip();
+				if (flipH) p = p.flop();
+				return p;
+			};
+
+			// Exposed corners only appear off the right angles; emit PNG for the alpha.
+			if (transparent && a % 90 !== 0) {
+				const out = await build().png().toBuffer();
+				return { ok: true, bytes: new Uint8Array(out), mime: 'image/png', ext: 'png' };
+			}
+
+			const preserved = format ? PRESERVABLE[format] : undefined;
+			if (preserved) {
+				const out = await build().toBuffer();
+				return { ok: true, bytes: new Uint8Array(out), mime: preserved.mime, ext: preserved.ext };
+			}
+			const out = await build().png().toBuffer();
+			return { ok: true, bytes: new Uint8Array(out), mime: 'image/png', ext: 'png' };
+		} catch {
+			return { ok: false, error: 'This image could not be rotated.' };
+		}
+	}
 }

@@ -114,3 +114,15 @@ Open items:
   square frame (`border-primary/50`). Decide whether to keep the frame, drop it
   so it matches the bare glowing favicon, or drop the glow at the small sidebar
   size.
+
+## Cross-cutting — returned outputs
+
+Applies to every tool that hands a result back, not one feature.
+
+- **Redesign the UI for returned outputs.** How a tool shows and returns its
+  result differs case by case (image result panel + Download, OCR text pane,
+  JSON in-place editor, ZIP download, …). Settle on a consistent pattern for
+  presenting and downloading a tool's output.
+- **Redesign the naming for returned files.** Download filenames are derived ad
+  hoc per controller (`-no-bg`, `-rotated`, `-cropped`, `-padded`, `-resized`,
+  …). Define one consistent scheme for naming returned files.
