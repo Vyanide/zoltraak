@@ -177,9 +177,15 @@ export const creditGroups: CreditGroup[] = [
 			},
 			{
 				name: 'onnxruntime-node',
-				description: 'Runs the ONNX background-removal models on CPU.',
+				description: 'Runs the ONNX background-removal and OCR models on CPU.',
 				version: '1.26.0',
 				href: 'https://github.com/microsoft/onnxruntime'
+			},
+			{
+				name: 'ppu-paddle-ocr',
+				description: 'Runs the PP-OCRv6 detection + recognition pipeline for the image OCR tool.',
+				version: '6.0.0',
+				href: 'https://github.com/PT-Perkasa-Pilar-Utama/ppu-paddle-ocr'
 			},
 			{
 				name: 'fflate',
@@ -229,7 +235,7 @@ export const creditGroups: CreditGroup[] = [
 	},
 	{
 		title: 'AI models',
-		blurb: 'The background remover runs released ONNX weights from the rembg project; the models originate from this research.',
+		blurb: 'The background remover and OCR tool run released ONNX weights — from the rembg project and PaddleOCR — that originate from the research below.',
 		items: [
 			{
 				name: 'rembg',
@@ -245,6 +251,11 @@ export const creditGroups: CreditGroup[] = [
 				name: 'IS-Net (DIS)',
 				description: "Segmentation network behind the 'isnet-anime' model.",
 				href: 'https://github.com/xuebinqin/DIS'
+			},
+			{
+				name: 'PaddleOCR (PP-OCRv6)',
+				description: 'Text detection + recognition models behind the image OCR tool.',
+				href: 'https://github.com/PaddlePaddle/PaddleOCR'
 			}
 		]
 	}

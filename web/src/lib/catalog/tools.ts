@@ -162,7 +162,6 @@ export const tools: Tool[] = [
         href: "/image/ocr",
         category: "image",
         icon: ScanText,
-        status: "coming-soon",
     },
     {
         id: "media-video-convert",

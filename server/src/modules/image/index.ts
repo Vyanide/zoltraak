@@ -3,6 +3,7 @@ import { ImageModel } from './model';
 import { ImageService } from './service';
 import { convertImage } from './convert';
 import { removeBackground } from './background';
+import { recognizeText } from './ocr';
 import { attachment } from '../../http';
 
 /**
@@ -98,4 +99,17 @@ export const imageController = new Elysia({ prefix: '/image' })
 			});
 		},
 		{ body: 'image.resizeBody' }
+	)
+	.post(
+		'/ocr',
+		async ({ body, status }) => {
+			const result = await recognizeText(await body.file.arrayBuffer());
+			if (!result.ok) return status(422, { error: result.error });
+
+			// Strictly text out — the response body is the extracted text.
+			return new Response(result.text, {
+				headers: { 'content-type': 'text/plain; charset=utf-8' }
+			});
+		},
+		{ body: 'image.ocrBody' }
 	);

@@ -5,8 +5,8 @@
     "": {
       "name": "zoltraak",
       "dependencies": {
-        "@fontsource-variable/hanken-grotesk": "^5.2.8",
-        "@fontsource-variable/spline-sans-mono": "^5.2.8",
+        "@fontsource-variable/hanken-grotesk": "5.2.8",
+        "@fontsource-variable/spline-sans-mono": "5.2.8",
         "pdfjs-dist": "6.0.227",
         "svelte-dnd-action": "0.9.70",
       },

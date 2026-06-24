@@ -4,5 +4,5 @@ node_modules
 !.env.example
 *.log
 
-# Downloaded ONNX background-removal models (fetched on first use)
+# Downloaded ONNX models (bg-removal, OCR) are fetched on first use, not committed.
 models/

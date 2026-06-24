@@ -95,12 +95,24 @@ export namespace ImageModel {
 	});
 	export type ResizeBody = typeof resizeBody.static;
 
+	/**
+	 * Multipart body for `POST /image/ocr`.
+	 *
+	 * A single image to extract text from. The response is plain text, not a
+	 * file, so there are no other fields.
+	 */
+	export const ocrBody = t.Object({
+		file: t.File({ type: 'image/*', maxSize: '25m' })
+	});
+	export type OcrBody = typeof ocrBody.static;
+
 	/** Models registered on the Elysia instance and referenced by name. */
 	export const schemas = {
 		'image.convertBody': convertBody,
 		'image.removeBgBody': removeBgBody,
 		'image.padBody': padBody,
 		'image.cropBody': cropBody,
-		'image.resizeBody': resizeBody
+		'image.resizeBody': resizeBody,
+		'image.ocrBody': ocrBody
 	};
 }

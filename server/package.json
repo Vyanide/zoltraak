@@ -14,6 +14,7 @@
     "elysia": "1.4.29",
     "fflate": "0.8.3",
     "onnxruntime-node": "1.26.0",
+    "ppu-paddle-ocr": "6.0.0",
     "sharp": "0.35.1"
   },
   "devDependencies": {
